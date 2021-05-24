@@ -16,7 +16,6 @@ local HMDebPrint = ManyHow.DebugPrint
 -- Private variables.
 -------------------------------------------------------------------------------
 
-
 -- Information about global strings for CHAT_MSG_X events.
 -- This contains the mapping between EVENTS and the global strings (globalstrings.lua) that are associated with those events
 local eventToGlobalStringMap
@@ -45,8 +44,6 @@ local captureOrders = {}
 local captureTable = {}
 --local parserEvent = {}
 
-
-
 -- ****************************************************************************
 -- Compares two global strings so the most specific one comes first.  This
 -- prevents incorrectly capturing information for certain events.
@@ -55,7 +52,6 @@ local function GlobalStringCompareFunc(globalStringNameOne, globalStringNameTwo)
 	-- Get the global string for the passed names.
 	local globalStringOne = _G[globalStringNameOne]
 	local globalStringTwo = _G[globalStringNameTwo]
-
     local gsOneStripped = gsub(globalStringOne, "%%%d?%$?[sd]", "")
     local gsTwoStripped = gsub(globalStringTwo, "%%%d?%$?[sd]", "")
 
@@ -64,23 +60,21 @@ local function GlobalStringCompareFunc(globalStringNameOne, globalStringNameTwo)
         -- Count the number of captures in each string.
         local numCapturesOne = 0
         for _ in gmatch(globalStringOne, "%%%d?%$?[sd]") do
-        numCapturesOne = numCapturesOne + 1
-    end
+            numCapturesOne = numCapturesOne + 1
+        end
 
-    local numCapturesTwo = 0
-    for _ in gmatch(globalStringTwo, "%%%d?%$?[sd]") do
-        numCapturesTwo = numCapturesTwo + 1
-    end
+        local numCapturesTwo = 0
+        for _ in gmatch(globalStringTwo, "%%%d?%$?[sd]") do
+            numCapturesTwo = numCapturesTwo + 1
+        end
 
-    -- Return the global string with the least captures.
-    return numCapturesOne < numCapturesTwo
-
+        -- Return the global string with the least captures.
+        return numCapturesOne < numCapturesTwo
     else
         -- Return the longer global string.
         return strlen(gsOneStripped) > strlen(gsTwoStripped)
     end
 end
-
 
 -- ****************************************************************************
 -- Converts the passed global string into a lua search pattern with a capture
@@ -126,7 +120,6 @@ local function ConvertGlobalString(globalStringName)
     return searchPattern, captureOrder
 end
 
-
 -- ****************************************************************************
 -- Fills in the capture table with the captured data if a match is found.
 -- ****************************************************************************
@@ -142,15 +135,12 @@ local function CaptureData(matchStart, matchEnd, c1, c2, c3, c4, c5, c6, c7, c8,
         captureTable[7] = c7
         captureTable[8] = c8
         captureTable[9] = c9
-
         -- Return the last position of the match.
         return matchEnd
     end
-
     -- Don't return anything since no match was found.
     return nil
 end
-
 
 -- ****************************************************************************
 -- Reorders the capture table according to the passed capture order.
@@ -163,7 +153,6 @@ local function ReorderCaptures(capOrder)
     t[o[6] or 6], t[o[7] or 7], t[o[8] or 8], t[o[9] or 9]
 end
 
-
 -- ****************************************************************************
 -- Parses the CHAT_MSG_X search style events.
 -- ****************************************************************************
@@ -174,7 +163,6 @@ local function ParseSearchMessage(event,msgText)
 
     -- Loop through all of the global strings associated with event
 	for _, globalStringName in pairs(eventToGlobalStringMap[event]) do
-
 		-- Make sure the function to pull the parsed data from the string exists.
 		local parseEventFiller = parseEventFillers[globalStringName]
 		if (parseEventFiller) then
@@ -190,31 +178,21 @@ local function ParseSearchMessage(event,msgText)
 
 				-- Create the new parser event.
 				local parserEvent = {}
-
 				parserEvent.OriginalText = msgText
-
 				-- Populate fields that exist for all events.
 				parserEvent.recipientUnit = "player"
-
 				-- Map the captured arguments into the parser event table.
 				parseEventFiller(parserEvent, captureTable)
-
 				return parserEvent
-
 			end -- if (matchEnd)
 		end
 	end
-
 	return  -- we found no match
 end
-
-
-
 
 -------------------------------------------------------------------------------
 -- Startup utility functions.
 -------------------------------------------------------------------------------
-
 
 -- ****************************************************************************
 -- Creates a map of events to possible global strings
@@ -239,7 +217,6 @@ local function CreateEventToGlobalStringMap()
             },
     }
 
-
     -- Loop through each of the events.
     for event, map in pairs(eventToGlobalStringMap) do
         -- Remove invalid global strings.
@@ -254,7 +231,6 @@ local function CreateEventToGlobalStringMap()
         sort(map, GlobalStringCompareFunc)
     end
 end
-
 
 -- ****************************************************************************
 -- Creates a map of capture functions for supported global strings.
@@ -295,8 +271,6 @@ local function CreateParseEventFillers()
     end
 end
 
-
-
 -- ****************************************************************************
 -- Converts all of the supported global strings.
 -- ****************************************************************************
@@ -309,10 +283,6 @@ local function ConvertGlobalStrings()
         --HMDebPrint(searchPatterns[globalStringName] )
     end
 end
-
-
-
-
 
 -------------------------------------------------------------------------------
 -- Initialization.
@@ -338,7 +308,6 @@ end
 -- ****************************************************************************
 function mod:OnDisable()
 end
-
 
 -------------------------------------------------------------------------------
 -- External Interface
