@@ -9,7 +9,7 @@
 local mod = ManyHow:NewModule("Parser")
 local L = LibStub("AceLocale-3.0"):GetLocale("ManyHow")
 mod.modName = L["Parser"]
-mod.canBeDisabled = false;
+mod.canBeDisabled = false
 local HMDebPrint = ManyHow.DebugPrint
 
 -------------------------------------------------------------------------------
