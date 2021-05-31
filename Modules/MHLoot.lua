@@ -548,7 +548,7 @@ local function HandleFaction(parserEvent)
 	if C_Reputation.IsFactionParagon(factionID) then
 		barValue, barMax = C_Reputation.GetFactionParagonInfo(factionID)
 		barMin = 0
-		barValue = (barMin or 0) % barMax
+		barValue = (barValue or 0) % barMax
 		paragonTag = " (Paragon)"
 	end
 
