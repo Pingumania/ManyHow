@@ -184,7 +184,7 @@ local specialReputations = {
 	[BL["Talonpriest Ishaal"]]="bodyguard",
 	[BL["Tina Mudclaw"]]="friend",
 	[BL["Tormmok"]]="bodyguard",
-	[BL["Vivianne"]]="bodyguard"
+	[BL["Chromie"]]="chromie",
 }
 
 local friendReputationLevels = {
@@ -200,6 +200,16 @@ local bodyguardReputationLevels = {
 	{frMin=0,frMax=9999,frName="Bodyguard"},
 	{frMin=10000,frMax=19999,frName="Trusted Bodyguard"},
 	{frMin=20000,frMax=29999,frName="Personal Wingman"}
+}
+
+local chromieReputationLevels = {
+	{frMin=0,frMax=999,frName="Whelpling"},
+	{frMin=1000,frMax=1499,frName="Temporal Trainee"},
+	{frMin=1500,frMax=1999,frName="Timehopper"},
+	{frMin=2000,frMax=2499,frName="Chrono-Friend"},
+	{frMin=2500,frMax=2999,frName="Bronze Ally"},
+	{frMin=3000,frMax=4999,frName="Epoch-Mender"},
+	{frMin=5000,frMax=14999,frName="Timelord"}
 }
 
 local factionNameToID = {
@@ -586,7 +596,16 @@ local function HandleFaction(parserEvent)
 			end
 		end
 	elseif repType == "bodyguard" then
-		for _, frRep in pairs(bodyguardReputationLevels	) do
+		for _, frRep in pairs(bodyguardReputationLevels) do
+			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
+				local progress = barValue - frRep.frMin
+				local nextTransition = frRep.frMax - frRep.frMin
+				-- You are now (progress)/(next) into (standing)
+				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName .. "."
+			end
+		end
+	elseif repType == "chromie" then
+		for _, frRep in pairs(chromieReputationLevels) do
 			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
 				local progress = barValue - frRep.frMin
 				local nextTransition = frRep.frMax - frRep.frMin
