@@ -184,7 +184,15 @@ local specialReputations = {
 	[BL["Talonpriest Ishaal"]]="bodyguard",
 	[BL["Tina Mudclaw"]]="friend",
 	[BL["Tormmok"]]="bodyguard",
+	[BL["Vivianne"]]="bodyguard",
+	[BL["Akule Riverhorn"]]="friend",
 	[BL["Chromie"]]="chromie",
+	[BL["Conjurer Margoss"]]="friend",
+	[BL["Corbyn"]]="friend",
+	[BL["Ilyssia of the Waters"]]="friend",
+	[BL["Impus"]] ="friend",
+	[BL["Keeper Raynae"]]="friend",
+	[BL["Sha'leth"]]="friend",
 }
 
 local friendReputationLevels = {
