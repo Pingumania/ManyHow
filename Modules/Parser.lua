@@ -12,6 +12,8 @@ mod.modName = L["Parser"]
 mod.canBeDisabled = false
 local HMDebPrint = ManyHow.DebugPrint
 
+FACTION_STANDING_INCREASED_VENARI = "(%S+) [%a%s]+%. %[(%d+) [%a%s]+%.%]"
+
 -------------------------------------------------------------------------------
 -- Private variables.
 -------------------------------------------------------------------------------
@@ -213,7 +215,8 @@ local function CreateEventToGlobalStringMap()
 
         CHAT_MSG_COMBAT_FACTION_CHANGE = {
             "FACTION_STANDING_DECREASED", "FACTION_STANDING_DECREASED_GENERIC", "FACTION_STANDING_INCREASED",
-            "FACTION_STANDING_INCREASED_ACH_BONUS", "FACTION_STANDING_INCREASED_BONUS", "FACTION_STANDING_INCREASED_DOUBLE_BONUS", "FACTION_STANDING_INCREASED_GENERIC"
+            "FACTION_STANDING_INCREASED_ACH_BONUS", "FACTION_STANDING_INCREASED_BONUS", "FACTION_STANDING_INCREASED_DOUBLE_BONUS", "FACTION_STANDING_INCREASED_GENERIC",
+            "FACTION_STANDING_INCREASED_VENARI"
             },
     }
 
@@ -259,6 +262,7 @@ local function CreateParseEventFillers()
     parseEventFillers["FACTION_STANDING_INCREASED_ACH_BONUS"] = parseEventFillers["FACTION_STANDING_INCREASED"]
     parseEventFillers["FACTION_STANDING_INCREASED_BONUS"] = parseEventFillers["FACTION_STANDING_INCREASED"]
     parseEventFillers["FACTION_STANDING_INCREASED_DOUBLE_BONUS"] = parseEventFillers["FACTION_STANDING_INCREASED"]
+    parseEventFillers["FACTION_STANDING_INCREASED_VENARI"] = parseEventFillers["FACTION_STANDING_INCREASED"]
     parseEventFillers["FACTION_STANDING_DECREASED"] = parseEventFillers["FACTION_STANDING_INCREASED"]
     parseEventFillers["FACTION_STANDING_DECREASED_GENERIC"] = parseEventFillers["FACTION_STANDING_INCREASED_GENERIC"]
 
@@ -275,6 +279,9 @@ end
 -- Converts all of the supported global strings.
 -- ****************************************************************************
 local function ConvertGlobalStrings()
+    -- Ve'nari doesn't have a global string
+    searchPatterns["FACTION_STANDING_INCREASED_VENARI"] = FACTION_STANDING_INCREASED_VENARI
+
     -- Loop through all of the supported global strings.
     for globalStringName in pairs(parseEventFillers) do
         -- Get the global string converted to a lua search pattern and prepend an anchor to

@@ -193,6 +193,7 @@ local specialReputations = {
 	[BL["Impus"]] ="friend",
 	[BL["Keeper Raynae"]]="friend",
 	[BL["Sha'leth"]]="friend",
+	[BL["Ve'nari"]]="venari",
 }
 
 local friendReputationLevels = {
@@ -218,6 +219,14 @@ local chromieReputationLevels = {
 	{frMin=2500,frMax=2999,frName="Bronze Ally"},
 	{frMin=3000,frMax=4999,frName="Epoch-Mender"},
 	{frMin=5000,frMax=14999,frName="Timelord"}
+}
+
+local venariReputationLevels = {
+	{frMin=0,frMax=999,frName="Dubious"},
+	{frMin=1000,frMax=7000,frName="Apprehensive"},
+	{frMin=7000,frMax=14000,frName="Tentative"},
+	{frMin=14000,frMax=21000,frName="Ambivalent"},
+	{frMin=21000,frMax=42000,frName="Cordial"}
 }
 
 local factionNameToID = {
@@ -422,6 +431,8 @@ local factionNameToID = {
 	[BL["The Undying Army"]] = 2410,
 	[BL["The Ascended"]] = 2407,
 	[BL["The Avowed"]] = 2439,
+	["Death's Advance"] = 2470,
+	["The Archivist's Codex"] = 2472,
 }
 
 -- *********************************************************
@@ -576,10 +587,10 @@ local function HandleFaction(parserEvent)
 		barValue, barMax = C_Reputation.GetFactionParagonInfo(factionID)
 		barMin = 0
 		barValue = (barValue or 0) % barMax
-		paragonTag = " (Paragon)"
+		paragonTag = "Paragon"
 	end
 
-	local repType = specialReputations[parserEvent.factionString] or "normal"
+	local repType = paragonTag == "" and specialReputations[parserEvent.factionString] or "normal"
 	if repType == "friend" then
 		for _, frRep in pairs(friendReputationLevels) do
 			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
@@ -607,11 +618,24 @@ local function HandleFaction(parserEvent)
 				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName .. "."
 			end
 		end
+	elseif repType == "venari" then
+		for _, frRep in pairs(venariReputationLevels) do
+			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
+				local progress = barValue - frRep.frMin
+				local nextTransition = frRep.frMax - frRep.frMin
+				-- You are now (progress)/(next) into (standing)
+				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName .. "."
+			end
+		end
 	else
 		local progress = barValue - barMin
 		local nextTransition = barMax - barMin
 		-- You are now (progress)/(next) into (standing)
-		parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. _G["FACTION_STANDING_LABEL" .. standingID] .. paragonTag .. "."
+		if paragonTag ~= "" then
+			parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. paragonTag .. "."
+		else
+			parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. _G["FACTION_STANDING_LABEL" .. standingID] .. paragonTag .. "."
+		end
 	end
 end
 
