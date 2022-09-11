@@ -7,4 +7,4 @@ In addition to items it can track gold, currencies and reputation.
 
 ## Credits
 
-This is a fork of [ManyHow](https://www.curseforge.com/wow/addons/ManyHow) by [nallaahdk](https://www.curseforge.com/members/nallaahdk/projects).
+This is a fork of [HowMany](https://www.curseforge.com/wow/addons/howmany) by [nallaahdk](https://www.curseforge.com/members/nallaahdk/projects).
