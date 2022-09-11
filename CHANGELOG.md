@@ -1,3 +1,6 @@
+### Changed in 9.0.5-4
+- Fixed wrong current paragon reputation for some factions (for real this time)
+
 ### Changed in 9.0.5-3
 - Fixed wrong current paragon reputation value for some factions
 - Fixed chat messages sometimes missing the new amount
