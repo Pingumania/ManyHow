@@ -438,6 +438,7 @@ function mod:ItemTimerCallback(tableKey)
 			local info = ChatTypeInfo[type]
 
 			if ( type == "LOOT" ) then
+				local resultString = ""
 				local numItems = GetItemCount(tableKey) or 0
 
 				-- inventory still hasn't updated.  Delay again.
@@ -448,9 +449,11 @@ function mod:ItemTimerCallback(tableKey)
 						ItemHash[tableKey].TimerHandle = mod:ScheduleTimer("ItemTimerCallback", DELAY_TIME_INC, tableKey)
 						return
 					end
+					resultString = ""
+				else
+					resultString = " " .. L["You now have"] .. " " .. numItems .. "."
 				end
 
-				local resultString = " " .. L["You now have"] .. " " .. numItems .. "."
 				if ( lootChatFrame ) then
 					lootChatFrame:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText ..  resultString, info.r, info.g, info.b, info.id)
 				else
