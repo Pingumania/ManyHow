@@ -42,25 +42,6 @@ local options = {
 	order = 1,
 	childGroups = 'tree',
 	args = {
-		--[[
-		Enable = {
-			type = "toggle",
-			name = L["Enable "] .. L["module"] .. " MHLoot",
-			desc = L["Enable "] .. L["module"] .. " MHLoot",
-			order = 11,
-			get = function()
-				return ManyHow.db.profile.modules["MHLoot"] ~= false or false
-			end,
-			set = function(_, v)
-				ManyHow.db.profile.modules["MHLoot"] = v
-				if v then
-					ManyHow:EnableModule("MHLoot")
-				else
-					ManyHow:DisableModule("MHLoot")
-				end
-			end
-		},
-		]]--
 		MoneyOptions = {
 			type = "group",
 			name = L["Money Loot Options"],
@@ -128,36 +109,7 @@ local options = {
 					set = function(info, v)
 						mod.db.profile.trackItems = v
 					end
-				} --[[,
-				delay = {
-					type = "toggle",
-					name = L["Delay item loot messages"],
-					desc = L["Sometimes your inventory hasn't updated when the loot message is sent.  Setting this option will delay loot messages to allow inventory to update."],
-					descStyle = "inline",
-					order = 2,
-					width = "full",
-					get = function()
-						return mod.db.profile.delayItems
-					end,
-					set = function(info, v)
-						mod.db.profile.delayItems = v
-					end
-				},
-				delayTime = {
-					type = "range",
-					order = 3,
-					name = L["Delay time (seconds)"],
-					desc = L["How long to delay item loot messages"],
-					min = MIN_DELAY_TIME,
-					max = MAX_DELAY_TIME,
-					step = DELAY_TIME_INC,
-					width = "full",
-					get = function(info) return mod.db.profile.delayTime or 1.0 end,
-					set = function(info, val)
-							mod.db.profile.delayTime = val
-						end,
 				}
-				]]
 			}
 		},
 		CurrencyOptions = {
@@ -202,30 +154,6 @@ local options = {
 				}
 			}
 		},
-		--[[
-		CombineOptions = {
-			type = "group",
-			name = L["Combine Messages"],
-			order = 2,
-			args = {
-				items = {
-					type = "toggle",
-					name = L["Combine Similar Loot Messages"],
-					desc = L["Combine multiple loots for the same item in a short timeframe together into a single message."],
-					descStyle = "inline",
-					order = 6,
-					get = function()
-						return mod.db.profile.trackCurrency
-					end,
-					set = function(info, v)
-						mod.db.profile.trackCurrency = v
-					end
-				}
-			}
-		}
-		]]--
-
-
 	}
 }
 
@@ -259,7 +187,6 @@ local specialReputations = {
 	[BL["Vivianne"]]="bodyguard"
 }
 
-
 local friendReputationLevels = {
 	{frMin=0,frMax=8399,frName=BL["Stranger"]},
 	{frMin=8400,frMax=16799,frName=BL["Acquaintance"]},
@@ -275,177 +202,186 @@ local bodyguardReputationLevels = {
 	{frMin=20000,frMax=29999,frName="Personal Wingman"}
 }
 
-
 local factionNameToID = {
-	["7th Legion"] = 2159,
-   [BL["Aeda Brightdawn"]] = 1740,
-   ["Akama's Trust"] = 1416,
-   [BL["Alliance Vanguard"]] = 1037,
-   [BL["Arakkoa Outcasts"]] = 1515,
-   [BL["Argent Crusade"]] = 1106,
-   [BL["Argent Dawn"]] = 529,
-   ["Armies of Legionfall"] = 2045,
-   [BL["Ashtongue Deathsworn"]] = 1012,
-   [BL["Avengers of Hyjal"]] = 1204,
-   [BL["Baradin's Wardens"]] = 1177,
-   [BL["Barracks Bodyguards"]] = 1735,
-   [BL["Bilgewater Cartel"]] = 1133,
-   [BL["Bizmo's Brawlpub"]] = 1419,
-   [BL["Bloodsail Buccaneers"]] = 87,
-   [BL["Booty Bay"]] = 21,
-   [BL["Brawl'gar Arena"]] = 1374,
-   [BL["Brood of Nozdormu"]] = 910,
-   [BL["Cenarion Circle"]] = 609,
-   [BL["Cenarion Expedition"]] = 942,
-   ["Champions of Azeroth"] = 2164,
-   [BL["Chee Chee"]] = 1277,
-   [BL["Court of Farondis"]] = 1900,
-   [BL["Council of Exarchs"]] = 1731,
-   [BL["Darkmoon Faire"]] = 909,
-   [BL["Darkspear Trolls"]] = 530,
-   [BL["Darnassus"]] = 69,
-   [BL["Defender Illona"]] = 1738,
-   [BL["Delvar Ironfist"]] = 1733,
-   [BL["Dominance Offensive"]] = 1375,
-   [BL["Dragonmaw Clan"]] = 1172,
-   [BL["Dreamweavers"]] = 1883,
-   [BL["Ella"]] = 1275,
-   ["Emperor Shaohao"]=1492,
-   [BL["Everlook"]] = 577,
-   [BL["Exodar"]] = 930,
-   [BL["Explorers' League"]] = 1068,
-   [BL["Farmer Fung"]] = 1283,
-   [BL["Fish Fellreed"]] = 1282,
-   [BL["Forest Hozen"]] = 1228,
-   [BL["Frenzyheart Tribe"]] = 1104,
-   [BL["Frostwolf Clan"]] = 729,
-   [BL["Frostwolf Orcs"]] = 1445,
-   [BL["Gadgetzan"]] = 369,
-   [BL["Gelkis Clan Centaur"]] = 92,
-   [BL["Gilnean Survivors"]] = 1815,
-   [BL["Gilneas"]] = 1134,
-   [BL["Gina Mudclaw"]] = 1281,
-   [BL["Gnomeregan"]] = 54,
-   [BL["Golden Lotus"]] = 1269,
-   [BL["Guardians of Hyjal"]] = 1158,
-   [BL["Guild"]] = 1168,
-   [BL["Hand of the Prophet"]] = 1847,
-   [BL["Haohan Mudclaw"]] = 1279,
-   [BL["Hellscream's Reach"]] = 1178,
-   [BL["Highmountain Tribe"]] = 1828,
-   [BL["Honor Hold"]] = 946,
-   [BL["Horde Expedition"]] = 1052,
-   [BL["Huojin Pandaren"]] = 1352,
-   [BL["Hydraxian Waterlords"]] = 749,
-   [BL["Illidari"]] = 1947,
-   [BL["Ironforge"]] = 47,
-   [BL["Jandvik Vrykul"]] = 1888,
-   [BL["Jogu the Drunk"]] = 1273,
-   [BL["Keepers of Time"]] = 989,
-   [BL["Kirin Tor"]] = 1090,
-   [BL["Kirin Tor Offensive"]] = 1387,
-   [BL["Knights of the Ebon Blade"]] = 1098,
-   [BL["Kurenai"]] = 978,
-   [BL["Laughing Skull Orcs"]] = 1708,
-   [BL["Leorajh"]] = 1741,
-   [BL["Lower City"]] = 1011,
-   [BL["Magram Clan Centaur"]] = 93,
-   [BL["Nat Pagle"]] = 1358,
-   [BL["Netherwing"]] = 1015,
-   [BL["Nomi"]] = 1357,
-   [BL["Ogri'la"]] = 1038,
-   [BL["Old Hillpaw"]] = 1276,
-   [BL["Operation: Aardvark"]] = 1679,
-   [BL["Operation: Shieldwall"]] = 1376,
-   ["Order of Embers"] = 2161,
-   [BL["Order of the Awakened"]] = 1849,
-   [BL["Order of the Cloud Serpent"]] = 1271,
-   [BL["Orgrimmar"]] = 76,
-   [BL["Pearlfin Jinyu"]] = 1242,
-   ["Proudmoore Admiralty"] = 2160,
-   [BL["Ramkahen"]] = 1173,
-   [BL["Ratchet"]] = 470,
-   [BL["Ravenholdt"]] = 349,
-   [BL["Shado-Pan"]] = 1270,
-   [BL["Shado-Pan Assault"]] = 1435,
-   [BL["Shadowmoon Exiles"]] = 1520,
-   [BL["Shang Xi's Academy"]] = 1216,
-   [BL["Sha'tari Defense"]] = 1710,
-   [BL["Sha'tari Skyguard"]] = 1031,
-   [BL["Shattered Sun Offensive"]] = 1077,
-   [BL["Shen'dralar"]] = 809,
-   [BL["Sho"]] = 1278,
-   [BL["Silvermoon City"]] = 911,
-   [BL["Silverwing Sentinels"]] = 890,
-   [BL["Sporeggar"]] = 970,
-   [BL["Steamwheedle Draenor Expedition"]] = 1732,
-   [BL["Steamwheedle Preservation Society"]] = 1711,
-   [BL["Stormpike Guard"]] = 730,
-   ["Storm's Wake"] = 2162,
-   [BL["Stormwind"]] = 72,
-   [BL["Sunreaver Onslaught"]] = 1388,
-   [BL["Syndicate"]] = 70,
-   ["Talanji's Expedition"] = 2156,
-   [BL["Talonpriest Ishaal"]] = 1737,
-   [BL["The Aldor"]] = 932,
-   [BL["The Anglers"]] = 1302,
-   [BL["The Ashen Verdict"]] = 1156,
-   [BL["The August Celestials"]] = 1341,
-   [BL["The Black Prince"]] = 1359,
-   [BL["The Brewmasters"]] = 1351,
-   [BL["The Consortium"]] = 933,
-   [BL["The Defilers"]] = 510,
-   [BL["The Earthen Ring"]] = 1135,
-   [BL["The First Responders"]] = 1984,
-   [BL["The Frostborn"]] = 1126,
-   [BL["The Hand of Vengeance"]] = 1067,
-   ["The Honorbound"] = 2157,
-   [BL["The Kalu'ak"]] = 1073,
-   [BL["The Klaxxi"]] = 1337,
-   [BL["The League of Arathor"]] = 509,
-   [BL["The Lorewalkers"]] = 1345,
-   [BL["The Mag'har"]] = 941,
-   [BL["The Nightfallen"]] = 1859,
-   [BL["The Oracles"]] = 1105,
-   [BL["Therazane"]] = 1171,
-   [BL["The Scale of the Sands"]] = 990,
-   [BL["The Saberstalkers"]] = 1850,
-   [BL["The Scryers"]] = 934,
-   [BL["The Sha'tar"]] = 935,
-   [BL["The Silver Covenant"]] = 1094,
-   [BL["The Sons of Hodir"]] = 1119,
-   [BL["The Sunreavers"]] = 1124,
-   [BL["The Taunka"]] = 1064,
-   [BL["The Tillers"]] = 1272,
-   [BL["The Violet Eye"]] = 967,
-   [BL["The Wardens"]] = 1894,
-   [BL["The Wyrmrest Accord"]] = 1091,
-   [BL["Thorium Brotherhood"]] = 59,
-   [BL["Thrallmar"]] = 947,
-   [BL["Thunder Bluff"]] = 81,
-   [BL["Timbermaw Hold"]] = 576,
-   [BL["Tina Mudclaw"]] = 1280,
-   [BL["Tormmok"]] = 1736,
-   ["Tortollan Seekers"] = 2163,
-   [BL["Tranquillien"]] = 922,
-   [BL["Tushui Pandaren"]] = 1353,
-   [BL["Undercity"]] = 68,
-   [BL["Valarjar"]] = 1948,
-   [BL["Valiance Expedition"]] = 1050,
-   [BL["Vivianne"]] = 1739,
-   ["Voldunai"] = 2158,
-   [BL["Vol'jin's Headhunters"]] = 1848,
-   [BL["Vol'jin's Spear"]] = 1681,
-   [BL["Warsong Offensive"]] = 1085,
-   [BL["Warsong Outriders"]] = 889,
-   [BL["Wildhammer Clan"]] = 1174,
-   [BL["Wintersaber Trainers"]] = 589,
-   [BL["Wrynn's Vanguard"]] = 1682,
-   [BL["Zandalar Tribe"]] = 270,
-   ["Zandalari Dinosaurs"] = 2111,
-   ["Zandalari Empire"] = 2103
- }
-
+	[BL["7th Legion"]] = 2159,
+	[BL["Aeda Brightdawn"]] = 1740,
+	[BL["Akama's Trust"]] = 1416,
+	[BL["Alliance Vanguard"]] = 1037,
+	[BL["Arakkoa Outcasts"]] = 1515,
+	[BL["Argent Crusade"]] = 1106,
+	[BL["Argent Dawn"]] = 529,
+	[BL["Armies of Legionfall"]] = 2045,
+	[BL["Army of the Light"]] = 2165,
+	[BL["Ashtongue Deathsworn"]] = 1012,
+	[BL["Avengers of Hyjal"]] = 1204,
+	[BL["Baradin's Wardens"]] = 1177,
+	[BL["Barracks Bodyguards"]] = 1735,
+	[BL["Bilgewater Cartel"]] = 1133,
+	[BL["Bizmo's Brawlpub"]] = 1419,
+	[BL["Bloodsail Buccaneers"]] = 87,
+	[BL["Booty Bay"]] = 21,
+	[BL["Brawl'gar Arena"]] = 1374,
+	[BL["Brood of Nozdormu"]] = 910,
+	[BL["Cenarion Circle"]] = 609,
+	[BL["Cenarion Expedition"]] = 942,
+	[BL["Champions of Azeroth"]] = 2164,
+	[BL["Chee Chee"]] = 1277,
+	[BL["Council of Exarchs"]] = 1731,
+	[BL["Court of Farondis"]] = 1900,
+	[BL["Court of Harvesters"]] = 2413,
+	[BL["Court of Night"]] = 2464,
+	[BL["Darkmoon Faire"]] = 909,
+	[BL["Darkspear Trolls"]] = 530,
+	[BL["Darnassus"]] = 69,
+	[BL["Defender Illona"]] = 1738,
+	[BL["Delvar Ironfist"]] = 1733,
+	[BL["Dominance Offensive"]] = 1375,
+	[BL["Dragonmaw Clan"]] = 1172,
+	[BL["Dreamweavers"]] = 1883,
+	[BL["Ella"]] = 1275,
+	[BL["Emperor Shaohao"]] = 1492,
+	[BL["Everlook"]] = 577,
+	[BL["Exodar"]] = 930,
+	[BL["Explorers' League"]] = 1068,
+	[BL["Farmer Fung"]] = 1283,
+	[BL["Fish Fellreed"]] = 1282,
+	[BL["Forest Hozen"]] = 1228,
+	[BL["Frenzyheart Tribe"]] = 1104,
+	[BL["Frostwolf Clan"]] = 729,
+	[BL["Frostwolf Orcs"]] = 1445,
+	[BL["Gadgetzan"]] = 369,
+	[BL["Gelkis Clan Centaur"]] = 92,
+	[BL["Gilnean Survivors"]] = 1815,
+	[BL["Gilneas"]] = 1134,
+	[BL["Gina Mudclaw"]] = 1281,
+	[BL["Gnomeregan"]] = 54,
+	[BL["Golden Lotus"]] = 1269,
+	[BL["Guardians of Hyjal"]] = 1158,
+	[BL["Guild"]] = 1168,
+	[BL["Hand of the Prophet"]] = 1847,
+	[BL["Haohan Mudclaw"]] = 1279,
+	[BL["Hellscream's Reach"]] = 1178,
+	[BL["Highmountain Tribe"]] = 1828,
+	[BL["Honeyback Hive"]] = 2395,
+	[BL["Honor Hold"]] = 946,
+	[BL["Horde Expedition"]] = 1052,
+	[BL["Huojin Pandaren"]] = 1352,
+	[BL["Hydraxian Waterlords"]] = 749,
+	[BL["Illidari"]] = 1947,
+	[BL["Ironforge"]] = 47,
+	[BL["Jandvik Vrykul"]] = 1888,
+	[BL["Jogu the Drunk"]] = 1273,
+	[BL["Keepers of Time"]] = 989,
+	[BL["Kirin Tor Offensive"]] = 1387,
+	[BL["Kirin Tor"]] = 1090,
+	[BL["Knights of the Ebon Blade"]] = 1098,
+	[BL["Kurenai"]] = 978,
+	[BL["Laughing Skull Orcs"]] = 1708,
+	[BL["Leorajh"]] = 1741,
+	[BL["Lower City"]] = 1011,
+	[BL["Magram Clan Centaur"]] = 93,
+	[BL["Nat Pagle"]] = 1358,
+	[BL["Netherwing"]] = 1015,
+	[BL["Nomi"]] = 1357,
+	[BL["Ogri'la"]] = 1038,
+	[BL["Old Hillpaw"]] = 1276,
+	[BL["Operation: Aardvark"]] = 1679,
+	[BL["Operation: Shieldwall"]] = 1376,
+	[BL["Order of Embers"]] = 2161,
+	[BL["Order of the Awakened"]] = 1849,
+	[BL["Order of the Cloud Serpent"]] = 1271,
+	[BL["Orgrimmar"]] = 76,
+	[BL["Pearlfin Jinyu"]] = 1242,
+	[BL["Proudmoore Admiralty"]] = 2160,
+	[BL["Ramkahen"]] = 1173,
+	[BL["Ratchet"]] = 470,
+	[BL["Ravenholdt"]] = 349,
+	[BL["Rustbolt Resistance"]] = 2391,
+	[BL["Sha'tari Defense"]] = 1710,
+	[BL["Sha'tari Skyguard"]] = 1031,
+	[BL["Shado-Pan Assault"]] = 1435,
+	[BL["Shado-Pan"]] = 1270,
+	[BL["Shadowmoon Exiles"]] = 1520,
+	[BL["Shang Xi's Academy"]] = 1216,
+	[BL["Shattered Sun Offensive"]] = 1077,
+	[BL["Shen'dralar"]] = 809,
+	[BL["Sho"]] = 1278,
+	[BL["Silvermoon City"]] = 911,
+	[BL["Silverwing Sentinels"]] = 890,
+	[BL["Sporeggar"]] = 970,
+	[BL["Steamwheedle Draenor Expedition"]] = 1732,
+	[BL["Steamwheedle Preservation Society"]] = 1711,
+	[BL["Storm's Wake"]] = 2162,
+	[BL["Stormpike Guard"]] = 730,
+	[BL["Stormwind"]] = 72,
+	[BL["Sunreaver Onslaught"]] = 1388,
+	[BL["Syndicate"]] = 70,
+	[BL["Talanji's Expedition"]] = 2156,
+	[BL["Talonpriest Ishaal"]] = 1737,
+	[BL["The Aldor"]] = 932,
+	[BL["The Anglers"]] = 1302,
+	[BL["The Ascended"]] = 2407,
+	[BL["The Ashen Verdict"]] = 1156,
+	[BL["The August Celestials"]] = 1341,
+	[BL["The Avowed"]] = 2439,
+	[BL["The Black Prince"]] = 1359,
+	[BL["The Brewmasters"]] = 1351,
+	[BL["The Consortium"]] = 933,
+	[BL["The Defilers"]] = 510,
+	[BL["The Earthen Ring"]] = 1135,
+	[BL["The First Responders"]] = 1984,
+	[BL["The Frostborn"]] = 1126,
+	[BL["The Hand of Vengeance"]] = 1067,
+	[BL["The Honorbound"]] = 2157,
+	[BL["The Kalu'ak"]] = 1073,
+	[BL["The Klaxxi"]] = 1337,
+	[BL["The League of Arathor"]] = 509,
+	[BL["The Lorewalkers"]] = 1345,
+	[BL["The Mag'har"]] = 941,
+	[BL["The Nightfallen"]] = 1859,
+	[BL["The Oracles"]] = 1105,
+	[BL["The Saberstalkers"]] = 1850,
+	[BL["The Scale of the Sands"]] = 990,
+	[BL["The Scryers"]] = 934,
+	[BL["The Sha'tar"]] = 935,
+	[BL["The Silver Covenant"]] = 1094,
+	[BL["The Sons of Hodir"]] = 1119,
+	[BL["The Sunreavers"]] = 1124,
+	[BL["The Taunka"]] = 1064,
+	[BL["The Tillers"]] = 1272,
+	[BL["The Undying Army"]] = 2410,
+	[BL["The Unshackled"]] = 2373,
+	[BL["The Violet Eye"]] = 967,
+	[BL["The Wardens"]] = 1894,
+	[BL["The Wild Hunt"]] = 2465,
+	[BL["The Wyrmrest Accord"]] = 1091,
+	[BL["Therazane"]] = 1171,
+	[BL["Thorium Brotherhood"]] = 59,
+	[BL["Thrallmar"]] = 947,
+	[BL["Thunder Bluff"]] = 81,
+	[BL["Timbermaw Hold"]] = 576,
+	[BL["Tina Mudclaw"]] = 1280,
+	[BL["Tormmok"]] = 1736,
+	[BL["Tortollan Seekers"]] = 2163,
+	[BL["Tranquillien"]] = 922,
+	[BL["Tushui Pandaren"]] = 1353,
+	[BL["Undercity"]] = 68,
+	[BL["Valarjar"]] = 1948,
+	[BL["Valiance Expedition"]] = 1050,
+	[BL["Ve'nari"]] = 2432,
+	[BL["Vivianne"]] = 1739,
+	[BL["Vol'jin's Headhunters"]] = 1848,
+	[BL["Vol'jin's Spear"]] = 1681,
+	[BL["Voldunai"]] = 2158,
+	[BL["Warsong Offensive"]] = 1085,
+	[BL["Warsong Outriders"]] = 889,
+	[BL["Waveblade Ankoan"]] = 2400,
+	[BL["Wildhammer Clan"]] = 1174,
+	[BL["Wintersaber Trainers"]] = 589,
+	[BL["Wrynn's Vanguard"]] = 1682,
+	[BL["Zandalar Tribe"]] = 270,
+	[BL["Zandalari Empire"]] = 2103,
+}
 
 -- *********************************************************
 -- This function gets called by a timer in the case we don't
@@ -453,84 +389,55 @@ local factionNameToID = {
 -- we just push the message out unmodified.
 -- *********************************************************
 function mod:ItemTimerCallback(tableKey)
-
 	if ( ItemHash[tableKey] ) then  -- ok, we found it
-
 		local event = ItemHash[tableKey].ParserEvent.event
 
 		if ( strsub(event, 1, 8) == "CHAT_MSG" ) then
-
 			local type = strsub(event, 10);
 			local info = ChatTypeInfo[type];
 
 			if ( type == "LOOT" ) then
-
 				local numItems = GetItemCount(tableKey) or 0
 
 				-- inventory still hasn't updated.  Delay again.
 				if ( numItems == 0 ) then
 					-- If we've delayed once already, then just let the message go.
 					if ItemHash[tableKey].extraDelayCounter == 0 then
-
 						ItemHash[tableKey].extraDelayCounter = (ItemHash[tableKey].extraDelayCounter or 0)+ 1
-						--[[local extraTime = DELAY_TIME_INC
-
-						if mod.db.profile.delayItems then -- delay already turned on, but not high enough?
-							if ( mod.db.profile.delayTime < MAX_DELAY_TIME-DELAY_TIME_INC ) then
-								mod.db.profile.delayTime = mod.db.profile.delayTime + DELAY_TIME_INC
-							end
-						else
-							--mod.db.profile.delayItems = true  -- delay not on, so turn it on.
-							--mod.db.profile.delayTime = MIN_DELAY_TIME
-
-							extraTime = MIN_DELAY_TIME
-						end
-						]]--
 						ItemHash[tableKey].TimerHandle = mod:ScheduleTimer( "ItemTimerCallback", DELAY_TIME_INC, tableKey)
-
 						return
 					end
-
 				end
 
 				--local resultString = " " .. L["You now have"] .. " " .. numItems .. "."
-
 				if ( lootChatFrame ) then
 					lootChatFrame:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText, info.r, info.g, info.b, info.id);
 				else
 					DEFAULT_CHAT_FRAME:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText, info.r, info.g, info.b, info.id);
 				end
-
 			end
 		end
 		ItemHash[tableKey] = nil
 	end
-
 end
 
 ----------------------------------------
 -- When we get a bag update, see if there is anything we can force out of the queue
 ----------------------------------------
 function mod:BAG_UPDATE_DELAYED()
-
 	local itemLink
 	for itemLink in pairs(ItemHash) do
-
 		local event = ItemHash[itemLink].ParserEvent.event
 
 		if ( strsub(event, 1, 8) == "CHAT_MSG" ) then -- These conditions should always be true, but just being careful
-
 			local type = strsub(event, 10);
 			local info = ChatTypeInfo[type];
 
 			if ( type == "LOOT" ) then
-
 				local numItems = GetItemCount(itemLink) or 0
-
 				-- If the count has changed, then we (probably) have gotten our update
 				-- If the count hasn't changed yet.. let the timer handle it.
 				if numItems ~= ItemHash[itemLink].numItemsBefore then
-
 					-- cancel the timer
 					mod:CancelTimer(ItemHash[itemLink].TimerHandle, true)
 
@@ -549,20 +456,15 @@ function mod:BAG_UPDATE_DELAYED()
 					end
 
 					ItemHash[itemLink] = nil
-
 				end
 			end
 		end
 	end
-
-
 end
-
 
 -- *********************************************************
 -- *********************************************************
 local function HandleCurrency(parserEvent)
-
 	if ( not mod.db.profile.trackCurrency ) then return end
 
 	local idx, wasCurrency
@@ -611,8 +513,6 @@ local function HandleCurrency(parserEvent)
 		end
 	end
 end
-
-
 
 -- *********************************************************
 -- *********************************************************
@@ -683,7 +583,6 @@ local function HandleFaction(parserEvent)
 	end
 end
 
-
 -- *********************************************************
 -- *********************************************************
 local function HandleMoney(parserEvent)
@@ -721,7 +620,6 @@ local function HandleMoney(parserEvent)
 
 	parserEvent.MessageDelayed = false  -- we're not delaying this message.  Just let it go through
 end
-
 
 -- *********************************************************
 -- *********************************************************
@@ -773,7 +671,6 @@ local function HandleItems(parserEvent)
 	parserEvent.MessageDelayed = true  -- we're delaying this message, so kill the event here.
 end
 
-
 -- *********************************************************
 -- *********************************************************
 local function ParserEventsHandler(parserEvent,msgText)
@@ -790,7 +687,6 @@ local function ParserEventsHandler(parserEvent,msgText)
 		HandleItems(parserEvent)
 	end
 end
-
 
 -- *********************************************************
 -- First two parms will be self and event.  The remaining args will be the args passed on the triggering event
@@ -819,9 +715,6 @@ local function messageFilter(self, event, arg1, arg2, ... )
 		return false, arg1, arg2, ...
 	end
 end
-
-
-
 
 -- *********************************************************
 -- *********************************************************
@@ -852,7 +745,6 @@ function mod:OnEnable()
 	self:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
-
 -- *********************************************************
 -- *********************************************************
 function mod:OnDisable()
@@ -864,15 +756,12 @@ function mod:OnDisable()
 	self:UnregisterEvent("BAG_UPDATE_DELAYED")
 end
 
-
 -- *********************************************************
 -- *********************************************************
 function mod:OnInitialize()
 	self.db = ManyHow.db:RegisterNamespace("MHLoot", defaults)
 	mod.db.profile.delayItems = false;
 end
-
-
 
 -- *********************************************************
 -- Present some information to Ace

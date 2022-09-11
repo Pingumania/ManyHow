@@ -33,7 +33,6 @@ local options = {
 	}
 }
 
-
 -- Which modules do we want enabled by default?  This is tied to the ManyHow database, so it is saved across loads
 local defaultModuleStatus = {
 	profile = {
@@ -43,7 +42,6 @@ local defaultModuleStatus = {
 		}
 	}
 }
-
 
 ManyHow:SetDefaultModuleState(true)
 
@@ -59,12 +57,10 @@ ManyHow.currencyInfo = {}
 -- *******************
 function ManyHow:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("ManyHowDB", defaultModuleStatus, "Default")
-
 	LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("ManyHow", options.args)
 	optFrame = ACD3:AddToBlizOptions("ManyHow", "ManyHow", nil)
 
 	for rawModName, theMod in self:IterateModules() do
-
 		-- check if the module has options
 		local t
 		if theMod.GetOptions then
@@ -85,7 +81,6 @@ function ManyHow:OnInitialize()
 	end
 
 	self:RegisterChatCommand("ManyHow", "OpenConfig")
-
 	self.db.RegisterCallback(self, "OnProfileChanged", "UpdateConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "UpdateConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "UpdateConfig")
@@ -95,7 +90,6 @@ end
 function ManyHow:OpenConfig(input)
 	--InterfaceOptionsFrame_OpenToCategory(ManyHow.lastConfig)
 	InterfaceOptionsFrame_OpenToCategory("ManyHow")  -- optFrame
-
 end
 
 --[[
