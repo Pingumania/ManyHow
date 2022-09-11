@@ -403,17 +403,17 @@ function mod:ItemTimerCallback(tableKey)
 				if ( numItems == 0 ) then
 					-- If we've delayed once already, then just let the message go.
 					if ItemHash[tableKey].extraDelayCounter == 0 then
-						ItemHash[tableKey].extraDelayCounter = (ItemHash[tableKey].extraDelayCounter or 0)+ 1
-						ItemHash[tableKey].TimerHandle = mod:ScheduleTimer( "ItemTimerCallback", DELAY_TIME_INC, tableKey)
+						ItemHash[tableKey].extraDelayCounter = (ItemHash[tableKey].extraDelayCounter or 0) + 1
+						ItemHash[tableKey].TimerHandle = mod:ScheduleTimer("ItemTimerCallback", DELAY_TIME_INC, tableKey)
 						return
 					end
 				end
 
-				--local resultString = " " .. L["You now have"] .. " " .. numItems .. "."
+				local resultString = " " .. L["You now have"] .. " " .. numItems .. "."
 				if ( lootChatFrame ) then
-					lootChatFrame:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText, info.r, info.g, info.b, info.id);
+					lootChatFrame:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText ..  resultString, info.r, info.g, info.b, info.id)
 				else
-					DEFAULT_CHAT_FRAME:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText, info.r, info.g, info.b, info.id);
+					DEFAULT_CHAT_FRAME:AddMessage(ItemHash[tableKey].ParserEvent.OriginalText .. resultString, info.r, info.g, info.b, info.id)
 				end
 			end
 		end
