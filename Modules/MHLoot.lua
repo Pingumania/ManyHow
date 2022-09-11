@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("ManyHow")
 local B = LibStub("LibBabble-Faction-3.0")
 local BL = B:GetLookupTable()
 mod.modName = L["MHLoot"]
-mod.canBeDisabled = true;
+mod.canBeDisabled = true
 
 -- Find my parser module.  If it's not there, then, well, I can't do anything
 local ParseMod = ManyHow:GetModule("Parser")
@@ -393,8 +393,8 @@ function mod:ItemTimerCallback(tableKey)
 		local event = ItemHash[tableKey].ParserEvent.event
 
 		if ( strsub(event, 1, 8) == "CHAT_MSG" ) then
-			local type = strsub(event, 10);
-			local info = ChatTypeInfo[type];
+			local type = strsub(event, 10)
+			local info = ChatTypeInfo[type]
 
 			if ( type == "LOOT" ) then
 				local numItems = GetItemCount(tableKey) or 0
@@ -430,8 +430,8 @@ function mod:BAG_UPDATE_DELAYED()
 		local event = ItemHash[itemLink].ParserEvent.event
 
 		if ( strsub(event, 1, 8) == "CHAT_MSG" ) then -- These conditions should always be true, but just being careful
-			local type = strsub(event, 10);
-			local info = ChatTypeInfo[type];
+			local type = strsub(event, 10)
+			local info = ChatTypeInfo[type]
 
 			if ( type == "LOOT" ) then
 				local numItems = GetItemCount(itemLink) or 0
@@ -441,7 +441,7 @@ function mod:BAG_UPDATE_DELAYED()
 					-- cancel the timer
 					mod:CancelTimer(ItemHash[itemLink].TimerHandle, true)
 
-					local resultString;
+					local resultString
 					if ( numItems == 0 ) then
 						resultString = ""
 					else
@@ -449,10 +449,10 @@ function mod:BAG_UPDATE_DELAYED()
 					end
 
 					if ( lootChatFrame ) then
-						lootChatFrame:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. resultString, info.r, info.g, info.b, info.id);
-						--lootChatFrame:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. "(" .. ItemHash[itemLink].Class .. ")" .. resultString, info.r, info.g, info.b, info.id);
+						lootChatFrame:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. resultString, info.r, info.g, info.b, info.id)
+						--lootChatFrame:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. "(" .. ItemHash[itemLink].Class .. ")" .. resultString, info.r, info.g, info.b, info.id)
 					else
-						DEFAULT_CHAT_FRAME:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. resultString, info.r, info.g, info.b, info.id);
+						DEFAULT_CHAT_FRAME:AddMessage(ItemHash[itemLink].ParserEvent.OriginalText .. resultString, info.r, info.g, info.b, info.id)
 					end
 
 					ItemHash[itemLink] = nil
@@ -470,13 +470,13 @@ local function HandleCurrency(parserEvent)
 	local idx, wasCurrency
 	wasCurrency = false
 	-- Debug
-	-- DEFAULT_CHAT_FRAME:AddMessage( parserEvent.moneyString );
+	-- DEFAULT_CHAT_FRAME:AddMessage( parserEvent.moneyString )
 	for idx = 1, C_CurrencyInfo.GetCurrencyListSize() do
 		local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
 		if info and info.name ~= "Legion" and info.quantity ~= 0 then
 			local matchEnd = strfind(parserEvent.moneyString, info.name)
 			-- Debug
-			-- DEFAULT_CHAT_FRAME:AddMessage( cname .. " " .. tostring(ccount) );
+			-- DEFAULT_CHAT_FRAME:AddMessage( cname .. " " .. tostring(ccount) )
 			-- Check if a match was found.
 			if (matchEnd) then
 				ItemHash[parserEvent.moneyString] = nil  -- We don't have to worry about the timer any more, so just forget it.
@@ -547,39 +547,42 @@ local function HandleFaction(parserEvent)
 
 	-- Paragon faction level?
 	if C_Reputation.IsFactionParagon(factionID) then
-		local currentValue, threshold = C_Reputation.GetFactionParagonInfo(factionID);
-		barMin, barMax, barValue = 0, threshold, currentValue;
-		paragonTag = "(Paragon)"
+		local currentValue, threshold, _, hasPendingReward = C_Reputation.GetFactionParagonInfo(factionID)
+		barMin, barMax, barValue = 0, threshold, currentValue
+		if barValue > 10000 and hasPendingReward then
+			barValue = barValue - 10000
+		end
+		paragonTag = " (Paragon)"
 	-- Debug
-	-- DEFAULT_CHAT_FRAME:AddMessage( "Is Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) );
+	-- DEFAULT_CHAT_FRAME:AddMessage( "Is Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) )
 	-- else
-	-- DEFAULT_CHAT_FRAME:AddMessage( "Is NOT Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) );
+	-- DEFAULT_CHAT_FRAME:AddMessage( "Is NOT Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) )
 	end
 	--HMDebPrint("standingID=" .. standingID .. ", barMin=" .. barMin .. ", barMax=" .. barMax .. ", barValue=" .. barValue )
 	local repType = specialReputations[parserEvent.factionString] or "normal"
 	if repType == "friend" then
 		for _, frRep in pairs(friendReputationLevels) do
 			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
-				local progress = barValue-frRep.frMin
-				local nextTransition = frRep.frMax-frRep.frMin
+				local progress = barValue - frRep.frMin
+				local nextTransition = frRep.frMax - frRep.frMin
 				-- You are now (progress)/(next) into (standing)
-				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName
+				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName .. "."
 			end
 		end
 	elseif repType == "bodyguard" then
 		for _, frRep in pairs(bodyguardReputationLevels	) do
 			if ( barValue >= frRep.frMin and barValue <= frRep.frMax ) then
-				local progress = barValue-frRep.frMin
-				local nextTransition = frRep.frMax-frRep.frMin
+				local progress = barValue - frRep.frMin
+				local nextTransition = frRep.frMax - frRep.frMin
 				-- You are now (progress)/(next) into (standing)
-				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName
+				parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. frRep.frName .. "."
 			end
 		end
 	else
-		local progress = barValue-barMin
-		local nextTransition = barMax-barMin
+		local progress = barValue - barMin
+		local nextTransition = barMax - barMin
 		-- You are now (progress)/(next) into (standing)
-		parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. _G["FACTION_STANDING_LABEL" .. standingID] .. " " .. paragonTag
+		parserEvent.resultString = " " .. L["You are now"] .. " " .. progress .. "/" .. nextTransition .. " " .. L["into"] .. " " .. _G["FACTION_STANDING_LABEL" .. standingID] .. paragonTag .. "."
 	end
 end
 
@@ -613,9 +616,9 @@ local function HandleMoney(parserEvent)
 	end
 
 	if ( mod.db.profile.moneyAsColors ) then
-		parserEvent.resultString = ". " .. L["You now have"] .. " |cffffd700" .. playerGold .. "|r |cff808080" .. playerSilver .. "|r " .. "|cffeda55f" .. playerCopper .. "|r"
+		parserEvent.resultString = ". " .. L["You now have"] .. ": |cffffd700" .. playerGold .. "|r |cff808080" .. playerSilver .. "|r " .. "|cffeda55f" .. playerCopper .. "|r"
 	else
-		parserEvent.resultString = ". " .. L["You now have"] .. " " .. playerGold .. " " .. playerSilver .. " " .. playerCopper
+		parserEvent.resultString = ". " .. L["You now have"] .. ": " .. playerGold .. " " .. playerSilver .. " " .. playerCopper
 	end
 
 	parserEvent.MessageDelayed = false  -- we're not delaying this message.  Just let it go through
@@ -642,7 +645,7 @@ local function HandleItems(parserEvent)
 	local numItems = GetItemCount(itemLink) or 0
 	local numTotal = numItems -- + numLooted   -- removed because of apparent race condition
 
-	local _,_,_,_,_,itemClass,itemSubClass,_,_,_,_=GetItemInfo(itemLink);
+	local _, _, _, _, _, itemClass, itemSubClass = GetItemInfo(itemLink)
 
 	if ( ItemHash[itemLink] ) then -- we've recently seen one of these..
 		-- Cancel the old timer and refresh it
@@ -659,9 +662,9 @@ local function HandleItems(parserEvent)
 
 	-- Start the timer here..
 	if mod.db.profile.delayItems then
-		ItemHash[itemLink].TimerHandle = mod:ScheduleTimer( "ItemTimerCallback", mod.db.profile.delayTime, itemLink)
+		ItemHash[itemLink].TimerHandle = mod:ScheduleTimer("ItemTimerCallback", mod.db.profile.delayTime, itemLink)
 	else
-		ItemHash[itemLink].TimerHandle = mod:ScheduleTimer( "ItemTimerCallback", 1.0, itemLink)
+		ItemHash[itemLink].TimerHandle = mod:ScheduleTimer("ItemTimerCallback", 1.0, itemLink)
 	end
 
 	ItemHash[itemLink].numItemsBefore = numItems
@@ -721,7 +724,7 @@ end
 function mod:OnEnable()
 	--HMDebPrint("In MHLoot:OnEnable" )
 	for event in pairs(valid_events) do
-		ChatFrame_AddMessageEventFilter(event, messageFilter )
+		ChatFrame_AddMessageEventFilter(event, messageFilter)
 	end
 
 	-- Round to even tenths..
@@ -760,7 +763,7 @@ end
 -- *********************************************************
 function mod:OnInitialize()
 	self.db = ManyHow.db:RegisterNamespace("MHLoot", defaults)
-	mod.db.profile.delayItems = false;
+	mod.db.profile.delayItems = false
 end
 
 -- *********************************************************
