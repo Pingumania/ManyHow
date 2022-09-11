@@ -514,13 +514,13 @@ local function HandleCurrency(parserEvent)
 	local idx, wasCurrency
 	wasCurrency = false
 	-- Debug
-	-- DEFAULT_CHAT_FRAME:AddMessage( parserEvent.moneyString )
+	-- DEFAULT_CHAT_FRAME:AddMessage(parserEvent.moneyString)
 	for idx = 1, C_CurrencyInfo.GetCurrencyListSize() do
 		local info = C_CurrencyInfo.GetCurrencyListInfo(idx)
 		if info and info.name ~= "Legion" and info.quantity ~= 0 then
-			local matchEnd = strfind(parserEvent.moneyString, info.name)
+			local matchEnd = strfind(parserEvent.moneyString, "%["..info.name.."%]")
 			-- Debug
-			-- DEFAULT_CHAT_FRAME:AddMessage( cname .. " " .. tostring(ccount) )
+			-- DEFAULT_CHAT_FRAME:AddMessage(cname .. " " .. tostring(ccount))
 			-- Check if a match was found.
 			if (matchEnd) then
 				ItemHash[parserEvent.moneyString] = nil  -- We don't have to worry about the timer any more, so just forget it.
@@ -561,24 +561,7 @@ end
 -- *********************************************************
 -- *********************************************************
 local function HandleFaction(parserEvent)
-	-- HMDebPrint("In HandleFaction.." .. parserEvent.factionString .. " "  .. parserEvent.amount )
-
-	-- barValue
-	-- -42000 - -6001 (36000) - Hated
-	--  -6000 - -3001 ( 3000) - Hostile
-	--  -3000 -    -1 ( 3000) - Unfriendly
-	--+  0000 -  2999 ( 3000) - Neutral
-	--+  3000 -  8999 ( 6000) - Friendly
-	--+  9000 - 20999 (12000) - Honored
-	--+ 21000 - 41999 (21000) - Revered
-	--+ 42000 - 42999 ( 1000) - Exalted
-
-	--  0000 -  8390 (8400) - Stranger
-	--  8400 - 16799 (8400) - Acquaintence
-	-- 16800 - 25199 (8400) - Buddy
-	-- 25200 - 33599 (8400) - Friend
-	-- 33600 - 41999 (8400) - Good Friend
-	-- 42000 - 42999 (1000) - Best Friend
+	-- HMDebPrint("In HandleFaction "..parserEvent.factionString.." "..parserEvent.amount)
 
 	if ( not mod.db.profile.trackFaction ) then return end
 	-- See if we can find the faction ID
@@ -635,7 +618,7 @@ end
 -- *********************************************************
 -- *********************************************************
 local function HandleMoney(parserEvent)
-	-- HMDebPrint("In HandleMoney.." .. parserEvent.moneyString )
+	-- HMDebPrint("In HandleMoney "..parserEvent.moneyString)
 	if ( not mod.db.profile.trackMoney ) then return end
 	local mstart, mend, capCopper, capSilver, capGold
 
@@ -673,7 +656,7 @@ end
 -- *********************************************************
 -- *********************************************************
 local function HandleItems(parserEvent)
-	--HMDebPrint("In HandleItems" )
+	--HMDebPrint("In HandleItems")
 	-- Created items are subject to a race condition.  Sometimes they're already in inventory when we get notified,
 	-- sometimes they're not.  So always delay them.
 
@@ -693,7 +676,7 @@ local function HandleItems(parserEvent)
 
 	local _, _, _, _, _, itemClass, itemSubClass = GetItemInfo(itemLink)
 
-	if ( ItemHash[itemLink] ) then -- we've recently seen one of these..
+	if (ItemHash[itemLink]) then -- we've recently seen one of these..
 		-- Cancel the old timer and refresh it
 		if ItemHash[itemLink].TimerHandle then
 			mod:CancelTimer(ItemHash[itemLink].TimerHandle, true)
@@ -744,21 +727,21 @@ end
 local function messageFilter(self, event, arg1, arg2, ... )
 	local pEvent = nil
 	if arg1 and type(arg1) == "string" then
-		if ( ParseMod ~= nil ) then
+		if (ParseMod ~= nil) then
 			pEvent = ParseMod.ParseRawChatEvent(event, arg1)
-			if ( pEvent ) then
+			if (pEvent) then
 				ParserEventsHandler(pEvent,arg1)
-				if ( pEvent.resultString ) then
+				if (pEvent.resultString) then
 					arg1 = arg1 .. pEvent.resultString
 				end
-				if ( pEvent.MessageDelayed ) then
+				if (pEvent.MessageDelayed) then
 					pEvent.event = event
 				end
 			end
 		end
 	end
 
-	if ( pEvent and pEvent.MessageDelayed ) then
+	if (pEvent and pEvent.MessageDelayed) then
 		return true   -- Don't display this message now...
 	else
 		return false, arg1, arg2, ...
@@ -768,7 +751,7 @@ end
 -- *********************************************************
 -- *********************************************************
 function mod:OnEnable()
-	--HMDebPrint("In MHLoot:OnEnable" )
+	--HMDebPrint("In MHLoot:OnEnable")
 	for event in pairs(valid_events) do
 		ChatFrame_AddMessageEventFilter(event, messageFilter)
 	end
@@ -799,8 +782,8 @@ end
 function mod:OnDisable()
 	-- Stop receiving updates.
 	for event in pairs(valid_events) do
-		ChatFrame_RemoveMessageEventFilter(event, messageFilter )
-		--ChatFrame_RemoveMessageEventFilter("CHAT_MSG_LOOT", messageFilter )
+		ChatFrame_RemoveMessageEventFilter(event, messageFilter)
+		--ChatFrame_RemoveMessageEventFilter("CHAT_MSG_LOOT", messageFilter)
 	end
 	self:UnregisterEvent("BAG_UPDATE_DELAYED")
 end
