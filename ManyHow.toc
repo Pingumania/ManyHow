@@ -1,8 +1,10 @@
-## Interface: 90200
+## Interface: 90207
 ## Version: @project-version@
+
 ## Title: ManyHow
 ## Notes: Adds additional information to loot messages.
-## Author: pngmn
+## Author: Pingumania
+
 ## SavedVariables: ManyHowDB
 
 modules.xml
