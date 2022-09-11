@@ -545,20 +545,13 @@ local function HandleFaction(parserEvent)
 	local name, _, standingID, barMin, barMax, barValue, _, _, isHeader, _, hasRep = GetFactionInfoByID(factionID)
 	local paragonTag = ""
 
-	-- Paragon faction level?
 	if C_Reputation.IsFactionParagon(factionID) then
-		local currentValue, threshold, _, hasPendingReward = C_Reputation.GetFactionParagonInfo(factionID)
-		barMin, barMax, barValue = 0, threshold, currentValue
-		if barValue > 10000 and hasPendingReward then
-			barValue = barValue - 10000
-		end
+		barValue, barMax = C_Reputation.GetFactionParagonInfo(factionID)
+		barMin = 0
+		barValue = (barMin or 0) % barMax
 		paragonTag = " (Paragon)"
-	-- Debug
-	-- DEFAULT_CHAT_FRAME:AddMessage( "Is Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) )
-	-- else
-	-- DEFAULT_CHAT_FRAME:AddMessage( "Is NOT Paragon min=" .. tostring(barMin) .. " max=" .. tostring(barMax) .. " value=" .. tostring(barValue) )
 	end
-	--HMDebPrint("standingID=" .. standingID .. ", barMin=" .. barMin .. ", barMax=" .. barMax .. ", barValue=" .. barValue )
+
 	local repType = specialReputations[parserEvent.factionString] or "normal"
 	if repType == "friend" then
 		for _, frRep in pairs(friendReputationLevels) do
