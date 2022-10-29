@@ -1,0 +1,3 @@
+[submodule "Libs/LibBabble-Faction-3.0"]
+	path = Libs/LibBabble-Faction-3.0
+	url = https://github.com/Pingumania/LibBabble-Faction-3.0.git
