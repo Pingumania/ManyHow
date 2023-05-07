@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 100100
 ## Version: @project-version@
 
 ## Title: ManyHow
@@ -17,4 +17,3 @@ Data.lua
 
 Modules\Parser.lua
 Modules\MHLoot.lua
-

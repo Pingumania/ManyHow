@@ -1,3 +1,7 @@
+ManyHow | 10.1.0-1
+------------------
+- ToC update for 10.1.0
+
 ManyHow | 9.2.0-1
 -----------------
 - ToC update for 9.2.0
